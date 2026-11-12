@@ -1,0 +1,40 @@
+/workspace/bin/controller-gen object:headerFile=hack/boilerplate.go.txt paths=./api/...
+gofmt -w api cmd internal tests
+/workspace/bin/controller-gen crd:allowDangerousTypes=true rbac:roleName=manager-role paths=./... output:crd:artifacts:config=config/crd/bases output:rbac:artifacts:config=config/rbac
+mkdir -p charts/scalepilot/crds charts/scalepilot/rbac
+cp config/crd/bases/*.yaml charts/scalepilot/crds/
+cp config/rbac/role.yaml charts/scalepilot/rbac/role.yaml
+go test ./internal/... ./cmd/... -count=1
+?   	github.com/scalepilot/scalepilot-operator/internal/controller	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/metrics	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/observability	[no test files]
+ok  	github.com/scalepilot/scalepilot-operator/internal/policy	0.011s
+?   	github.com/scalepilot/scalepilot-operator/internal/queue	[no test files]
+ok  	github.com/scalepilot/scalepilot-operator/internal/scaling	0.022s
+ok  	github.com/scalepilot/scalepilot-operator/internal/security	0.118s
+?   	github.com/scalepilot/scalepilot-operator/internal/testutil	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/workload	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/benchmark	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/loadgen	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/policybench	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/worker	[no test files]
+KUBEBUILDER_ASSETS="$(/workspace/bin/setup-envtest use 1.37.0 --bin-dir /workspace/bin/k8s -p path)" go test -tags=envtest ./tests/envtest -count=1 -v -timeout=180s
+=== RUN   TestScaleStatusAndOwnershipConflict
+--- PASS: TestScaleStatusAndOwnershipConflict (2.33s)
+=== RUN   TestDuplicatePoliciesFailClosed
+--- PASS: TestDuplicatePoliciesFailClosed (0.19s)
+=== RUN   TestRedisOutageAndRestartCooldown
+--- PASS: TestRedisOutageAndRestartCooldown (0.40s)
+=== RUN   TestPendingIntentRecovery
+--- PASS: TestPendingIntentRecovery (0.10s)
+=== RUN   TestPauseDryRunDeletionAndNoStatusLoop
+--- PASS: TestPauseDryRunDeletionAndNoStatusLoop (0.06s)
+=== RUN   TestCRDRejectsInvalidSpec
+--- PASS: TestCRDRejectsInvalidSpec (0.02s)
+=== RUN   TestRuntimeTimezoneValidation
+--- PASS: TestRuntimeTimezoneValidation (0.02s)
+=== RUN   TestOptimisticConflictRetriesPreserveFields
+--- PASS: TestOptimisticConflictRetriesPreserveFields (0.17s)
+PASS
+ok  	github.com/scalepilot/scalepilot-operator/tests/envtest	8.628s

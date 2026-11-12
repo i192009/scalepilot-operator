@@ -1,0 +1,23 @@
+/workspace/bin/controller-gen crd:allowDangerousTypes=true rbac:roleName=manager-role paths=./... output:crd:artifacts:config=config/crd/bases output:rbac:artifacts:config=config/rbac
+mkdir -p charts/scalepilot/crds charts/scalepilot/rbac
+cp config/crd/bases/*.yaml charts/scalepilot/crds/
+cp config/rbac/role.yaml charts/scalepilot/rbac/role.yaml
+KUBEBUILDER_ASSETS="$(/workspace/bin/setup-envtest use 1.37.0 --bin-dir /workspace/bin/k8s -p path)" go test -tags=envtest ./tests/envtest -count=1 -v -timeout=180s
+=== RUN   TestScaleStatusAndOwnershipConflict
+--- PASS: TestScaleStatusAndOwnershipConflict (2.60s)
+=== RUN   TestDuplicatePoliciesFailClosed
+--- PASS: TestDuplicatePoliciesFailClosed (0.19s)
+=== RUN   TestRedisOutageAndRestartCooldown
+--- PASS: TestRedisOutageAndRestartCooldown (0.42s)
+=== RUN   TestPendingIntentRecovery
+--- PASS: TestPendingIntentRecovery (0.08s)
+=== RUN   TestPauseDryRunDeletionAndNoStatusLoop
+--- PASS: TestPauseDryRunDeletionAndNoStatusLoop (0.09s)
+=== RUN   TestCRDRejectsInvalidSpec
+--- PASS: TestCRDRejectsInvalidSpec (0.03s)
+=== RUN   TestRuntimeTimezoneValidation
+--- PASS: TestRuntimeTimezoneValidation (0.05s)
+=== RUN   TestOptimisticConflictRetriesPreserveFields
+--- PASS: TestOptimisticConflictRetriesPreserveFields (0.18s)
+PASS
+ok  	github.com/scalepilot/scalepilot-operator/tests/envtest	11.095s

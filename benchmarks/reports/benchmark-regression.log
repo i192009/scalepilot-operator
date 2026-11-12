@@ -1,0 +1,150 @@
+gofmt -w api cmd internal tests
+go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0 run --fix
+0 issues.
+go vet ./...
+go test ./internal/... ./cmd/... -count=1
+?   	github.com/scalepilot/scalepilot-operator/internal/controller	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/metrics	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/observability	[no test files]
+ok  	github.com/scalepilot/scalepilot-operator/internal/policy	0.010s
+?   	github.com/scalepilot/scalepilot-operator/internal/queue	[no test files]
+ok  	github.com/scalepilot/scalepilot-operator/internal/scaling	0.009s
+ok  	github.com/scalepilot/scalepilot-operator/internal/security	0.097s
+?   	github.com/scalepilot/scalepilot-operator/internal/testutil	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/workload	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/benchmark	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/loadgen	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/policybench	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/worker	[no test files]
+go test -tags=integration ./tests/integration -count=1 -v -timeout=180s
+=== RUN   TestRedisStreamsRecoveryAndMetrics
+2026/11/12 11:03:02 github.com/testcontainers/testcontainers-go - Connected to docker:
+  Server Version: 29.9.3
+  API Version: 1.51
+  Operating System: Docker Desktop
+  Total Memory: 7730 MB
+  Labels:
+    com.docker.desktop.address=npipe://\\.\pipe\docker_cli
+  Testcontainers for Go Version: v0.40.0
+  Resolved Docker Host: unix:///var/run/docker.sock
+  Resolved Docker Socket Path: /var/run/docker.sock
+  Test SessionID: 2424b9337042784e8e4e1a0cbe7382330ebe3db046f6a5529ae612aae6405116
+  Test ProcessID: 534962cb-c31b-4bb2-850a-fe2024238dc7
+2026/11/12 11:03:02 🐳 Creating container for image redis:7.4.7-alpine
+2026/11/12 11:03:03 🐳 Creating container for image testcontainers/ryuk:0.13.0
+2026/11/12 11:03:03 ✅ Container created: 1ad2197698ca
+2026/11/12 11:03:03 🐳 Starting container: 1ad2197698ca
+2026/11/12 11:03:03 ✅ Container started: 1ad2197698ca
+2026/11/12 11:03:03 ⏳ Waiting for container id 1ad2197698ca image: testcontainers/ryuk:0.13.0. Waiting for: port 8080/tcp to be listening
+2026/11/12 11:03:03 Shell not found in container
+2026/11/12 11:03:03 🔔 Container is ready: 1ad2197698ca
+2026/11/12 11:03:03 ✅ Container created: 1694d6f17ce0
+2026/11/12 11:03:03 🐳 Starting container: 1694d6f17ce0
+2026/11/12 11:03:04 ✅ Container started: 1694d6f17ce0
+2026/11/12 11:03:04 ⏳ Waiting for container id 1694d6f17ce0 image: redis:7.4.7-alpine. Waiting for: log message "Ready to accept connections"
+2026/11/12 11:03:04 🔔 Container is ready: 1694d6f17ce0
+2026/11/12 11:03:04 🐳 Stopping container: 1694d6f17ce0
+2026/11/12 11:03:04 ✅ Container stopped: 1694d6f17ce0
+2026/11/12 11:03:05 🐳 Stopping container: 1694d6f17ce0
+2026/11/12 11:03:05 ✅ Container stopped: 1694d6f17ce0
+2026/11/12 11:03:05 🐳 Terminating container: 1694d6f17ce0
+2026/11/12 11:03:05 🚫 Container terminated: 1694d6f17ce0
+--- PASS: TestRedisStreamsRecoveryAndMetrics (2.86s)
+=== RUN   TestAuthenticatedMutualTLSRedis
+2026/11/12 11:03:05 🐳 Creating container for image redis:7.4.7-alpine
+2026/11/12 11:03:05 ✅ Container created: e714bd898710
+2026/11/12 11:03:05 🐳 Starting container: e714bd898710
+2026/11/12 11:03:06 ✅ Container started: e714bd898710
+2026/11/12 11:03:06 ⏳ Waiting for container id e714bd898710 image: redis:7.4.7-alpine. Waiting for: log message "Ready to accept connections"
+2026/11/12 11:03:06 🔔 Container is ready: e714bd898710
+redis: 2026/11/12 11:03:06 pool.go:419: redis: connection pool: failed to dial after 5 attempts: tls: failed to verify certificate: x509: certificate is valid for redis.test, not wrong.test
+2026/11/12 11:03:06 🐳 Stopping container: e714bd898710
+2026/11/12 11:03:06 ✅ Container stopped: e714bd898710
+2026/11/12 11:03:06 🐳 Terminating container: e714bd898710
+2026/11/12 11:03:06 🚫 Container terminated: e714bd898710
+--- PASS: TestAuthenticatedMutualTLSRedis (1.23s)
+PASS
+ok  	github.com/scalepilot/scalepilot-operator/tests/integration	4.113s
+/workspace/bin/controller-gen crd:allowDangerousTypes=true rbac:roleName=manager-role paths=./... output:crd:artifacts:config=config/crd/bases output:rbac:artifacts:config=config/rbac
+mkdir -p charts/scalepilot/crds charts/scalepilot/rbac
+cp config/crd/bases/*.yaml charts/scalepilot/crds/
+cp config/rbac/role.yaml charts/scalepilot/rbac/role.yaml
+KUBEBUILDER_ASSETS="$(/workspace/bin/setup-envtest use 1.37.0 --bin-dir /workspace/bin/k8s -p path)" go test -tags=envtest ./tests/envtest -count=1 -v -timeout=180s
+=== RUN   TestScaleStatusAndOwnershipConflict
+--- PASS: TestScaleStatusAndOwnershipConflict (2.28s)
+=== RUN   TestDuplicatePoliciesFailClosed
+--- PASS: TestDuplicatePoliciesFailClosed (0.20s)
+=== RUN   TestRedisOutageAndRestartCooldown
+--- PASS: TestRedisOutageAndRestartCooldown (0.41s)
+=== RUN   TestPendingIntentRecovery
+--- PASS: TestPendingIntentRecovery (0.10s)
+=== RUN   TestPauseDryRunDeletionAndNoStatusLoop
+--- PASS: TestPauseDryRunDeletionAndNoStatusLoop (0.06s)
+=== RUN   TestCRDRejectsInvalidSpec
+--- PASS: TestCRDRejectsInvalidSpec (0.02s)
+=== RUN   TestRuntimeTimezoneValidation
+--- PASS: TestRuntimeTimezoneValidation (0.02s)
+=== RUN   TestOptimisticConflictRetriesPreserveFields
+--- PASS: TestOptimisticConflictRetriesPreserveFields (0.15s)
+PASS
+ok  	github.com/scalepilot/scalepilot-operator/tests/envtest	9.467s
+go test -race ./internal/... ./cmd/... -count=1
+?   	github.com/scalepilot/scalepilot-operator/internal/controller	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/metrics	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/observability	[no test files]
+ok  	github.com/scalepilot/scalepilot-operator/internal/policy	1.026s
+?   	github.com/scalepilot/scalepilot-operator/internal/queue	[no test files]
+ok  	github.com/scalepilot/scalepilot-operator/internal/scaling	1.081s
+ok  	github.com/scalepilot/scalepilot-operator/internal/security	1.943s
+?   	github.com/scalepilot/scalepilot-operator/internal/testutil	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/workload	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/benchmark	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/loadgen	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/policybench	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/worker	[no test files]
+mkdir -p /tmp/scalepilot-final
+CGO_ENABLED=0 go build -trimpath -o /tmp/scalepilot-final/manager ./cmd
+CGO_ENABLED=0 go build -trimpath -o /tmp/scalepilot-final/worker ./cmd/worker
+CGO_ENABLED=0 go build -trimpath -o /tmp/scalepilot-final/loadgen ./cmd/loadgen
+CGO_ENABLED=0 go build -trimpath -o /tmp/scalepilot-final/benchmark ./cmd/benchmark
+CGO_ENABLED=0 go build -trimpath -o /tmp/scalepilot-final/policybench ./cmd/policybench
+helm lint charts/scalepilot
+==> Linting charts/scalepilot
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+helm template scalepilot charts/scalepilot --namespace scalepilot-system > /tmp/scalepilot-helm.yaml
+/workspace/bin/controller-gen object:headerFile=hack/boilerplate.go.txt paths=./api/...
+/workspace/bin/controller-gen crd:allowDangerousTypes=true rbac:roleName=manager-role paths=./... output:crd:artifacts:config=config/crd/bases output:rbac:artifacts:config=config/rbac
+mkdir -p charts/scalepilot/crds charts/scalepilot/rbac
+cp config/crd/bases/*.yaml charts/scalepilot/crds/
+cp config/rbac/role.yaml charts/scalepilot/rbac/role.yaml
+git diff --exit-code -- api/v1alpha1/zz_generated.deepcopy.go config/crd config/rbac/role.yaml charts/scalepilot/crds charts/scalepilot/rbac
+serviceaccount/metrics-server unchanged
+clusterrole.rbac.authorization.k8s.io/system:aggregated-metrics-reader unchanged
+clusterrole.rbac.authorization.k8s.io/system:metrics-server unchanged
+rolebinding.rbac.authorization.k8s.io/metrics-server-auth-reader unchanged
+clusterrolebinding.rbac.authorization.k8s.io/metrics-server:system:auth-delegator unchanged
+clusterrolebinding.rbac.authorization.k8s.io/system:metrics-server unchanged
+service/metrics-server unchanged
+deployment.apps/metrics-server configured
+apiservice.apiregistration.k8s.io/v1beta1.metrics.k8s.io unchanged
+deployment.apps/metrics-server patched
+Waiting for deployment spec update to be observed...
+Waiting for deployment "metrics-server" rollout to finish: 1 old replicas are pending termination...
+deployment "metrics-server" successfully rolled out
+serviceaccount/metrics-server unchanged
+clusterrole.rbac.authorization.k8s.io/system:aggregated-metrics-reader unchanged
+clusterrole.rbac.authorization.k8s.io/system:metrics-server unchanged
+rolebinding.rbac.authorization.k8s.io/metrics-server-auth-reader unchanged
+clusterrolebinding.rbac.authorization.k8s.io/metrics-server:system:auth-delegator unchanged
+clusterrolebinding.rbac.authorization.k8s.io/system:metrics-server unchanged
+service/metrics-server unchanged
+deployment.apps/metrics-server configured
+apiservice.apiregistration.k8s.io/v1beta1.metrics.k8s.io unchanged
+deployment.apps/metrics-server patched
+Waiting for deployment spec update to be observed...
+Waiting for deployment "metrics-server" rollout to finish: 1 old replicas are pending termination...
+deployment "metrics-server" successfully rolled out

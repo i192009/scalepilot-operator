@@ -1,0 +1,6 @@
+mkdir -p /tmp/scalepilot-bin
+CGO_ENABLED=0 go build -trimpath -o /tmp/scalepilot-bin/manager ./cmd
+CGO_ENABLED=0 go build -trimpath -o /tmp/scalepilot-bin/worker ./cmd/worker
+CGO_ENABLED=0 go build -trimpath -o /tmp/scalepilot-bin/loadgen ./cmd/loadgen
+CGO_ENABLED=0 go build -trimpath -o /tmp/scalepilot-bin/benchmark ./cmd/benchmark
+CGO_ENABLED=0 go build -trimpath -o /tmp/scalepilot-bin/policybench ./cmd/policybench

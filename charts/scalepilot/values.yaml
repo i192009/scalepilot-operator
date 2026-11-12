@@ -1,0 +1,45 @@
+replicaCount: 2
+image:
+  repository: scalepilot/operator
+  tag: dev
+  pullPolicy: IfNotPresent
+watchNamespace: demo
+createWatchNamespace: true
+clusterWide: false
+leaderElection: true
+admissionGuard:
+  enabled: true
+logLevel: info
+reconcileInterval: 5s
+metrics:
+  port: 8080
+  secure: false
+healthPort: 8081
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: "1"
+    memory: 256Mi
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  fsGroup: 65532
+  seccompProfile:
+    type: RuntimeDefault
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+serviceMonitor:
+  enabled: false
+  labels: {}
+  tlsConfig: {}
+  authorization: {}
+networkPolicy:
+  enabled: true
+  redisPort: 6379
+otelEndpoint: ""

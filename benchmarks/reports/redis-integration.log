@@ -1,0 +1,51 @@
+go test -tags=integration ./tests/integration -count=1 -v -timeout=180s
+=== RUN   TestRedisStreamsRecoveryAndMetrics
+2026/11/12 03:25:35 github.com/testcontainers/testcontainers-go - Connected to docker:
+  Server Version: 29.9.3
+  API Version: 1.51
+  Operating System: Docker Desktop
+  Total Memory: 7730 MB
+  Labels:
+    com.docker.desktop.address=npipe://\\.\pipe\docker_cli
+  Testcontainers for Go Version: v0.40.0
+  Resolved Docker Host: unix:///var/run/docker.sock
+  Resolved Docker Socket Path: /var/run/docker.sock
+  Test SessionID: e3dd0628d1a45ea50f1159803bc3d9ba7df14c5f42844139072ea28b82b32ac6
+  Test ProcessID: 47909e5e-594d-44ee-a687-1488436ed50b
+2026/11/12 03:25:35 🐳 Creating container for image redis:7.4.7-alpine
+2026/11/12 03:25:38 🐳 Creating container for image testcontainers/ryuk:0.13.0
+2026/11/12 03:25:39 ✅ Container created: 2df9e39e6323
+2026/11/12 03:25:39 🐳 Starting container: 2df9e39e6323
+2026/11/12 03:25:39 ✅ Container started: 2df9e39e6323
+2026/11/12 03:25:39 ⏳ Waiting for container id 2df9e39e6323 image: testcontainers/ryuk:0.13.0. Waiting for: port 8080/tcp to be listening
+2026/11/12 03:25:39 Shell not found in container
+2026/11/12 03:25:39 🔔 Container is ready: 2df9e39e6323
+2026/11/12 03:25:39 ✅ Container created: 52b59a36724c
+2026/11/12 03:25:39 🐳 Starting container: 52b59a36724c
+2026/11/12 03:25:39 ✅ Container started: 52b59a36724c
+2026/11/12 03:25:39 ⏳ Waiting for container id 52b59a36724c image: redis:7.4.7-alpine. Waiting for: log message "Ready to accept connections"
+2026/11/12 03:25:40 🔔 Container is ready: 52b59a36724c
+2026/11/12 03:25:40 🐳 Stopping container: 52b59a36724c
+2026/11/12 03:25:40 ✅ Container stopped: 52b59a36724c
+redis: 2026/11/12 03:25:41 pool.go:419: redis: connection pool: failed to dial after 5 attempts: dial tcp 192.168.65.254:32777: connect: connection refused
+2026/11/12 03:25:41 🐳 Stopping container: 52b59a36724c
+2026/11/12 03:25:41 ✅ Container stopped: 52b59a36724c
+2026/11/12 03:25:41 🐳 Terminating container: 52b59a36724c
+redis: 2026/11/12 03:25:41 pool.go:419: redis: connection pool: failed to dial after 5 attempts: dial tcp 192.168.65.254:32777: connect: connection refused
+2026/11/12 03:25:42 🚫 Container terminated: 52b59a36724c
+--- PASS: TestRedisStreamsRecoveryAndMetrics (7.97s)
+=== RUN   TestAuthenticatedMutualTLSRedis
+2026/11/12 03:25:42 🐳 Creating container for image redis:7.4.7-alpine
+2026/11/12 03:25:42 ✅ Container created: 7ecfeebc103c
+2026/11/12 03:25:42 🐳 Starting container: 7ecfeebc103c
+2026/11/12 03:25:42 ✅ Container started: 7ecfeebc103c
+2026/11/12 03:25:42 ⏳ Waiting for container id 7ecfeebc103c image: redis:7.4.7-alpine. Waiting for: log message "Ready to accept connections"
+2026/11/12 03:25:42 🔔 Container is ready: 7ecfeebc103c
+redis: 2026/11/12 03:25:43 pool.go:419: redis: connection pool: failed to dial after 5 attempts: tls: failed to verify certificate: x509: certificate is valid for redis.test, not wrong.test
+2026/11/12 03:25:43 🐳 Stopping container: 7ecfeebc103c
+2026/11/12 03:25:43 ✅ Container stopped: 7ecfeebc103c
+2026/11/12 03:25:43 🐳 Terminating container: 7ecfeebc103c
+2026/11/12 03:25:43 🚫 Container terminated: 7ecfeebc103c
+--- PASS: TestAuthenticatedMutualTLSRedis (1.38s)
+PASS
+ok  	github.com/scalepilot/scalepilot-operator/tests/integration	9.552s

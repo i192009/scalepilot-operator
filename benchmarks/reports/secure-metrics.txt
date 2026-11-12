@@ -1,0 +1,2 @@
+Anonymous HTTPS metrics: 401
+Authorized monitoring service account: 200

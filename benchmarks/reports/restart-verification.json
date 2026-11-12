@@ -1,0 +1,13 @@
+{
+    "VerifiedAt":  "2026-11-12T11:04:46.0919992Z",
+    "ComparisonArms":  22,
+    "CompletedJobs":  3540,
+    "FailedJobs":  0,
+    "StoppedControllerManagerContainer":  "39c437af47c4201afaa9bf0c9cf9312f9e3596a92b99da96f4f0e8e12232892c",
+    "RunningControllerManagerContainer":  "555e30e30e0b69f75bd28e55aade2cf7b3a5e6fa40e387bac65d99d97d1be992",
+    "ControllerManagerRestartCount":  2,
+    "DeletedScalePilotLeader":  "scalepilot-controller-7466758976-clfp2",
+    "CurrentScalePilotLeader":  "scalepilot-controller-7466758976-j6vx8",
+    "GrafanaVersion":  "12.4.15",
+    "PrometheusTargetsUp":  5
+}

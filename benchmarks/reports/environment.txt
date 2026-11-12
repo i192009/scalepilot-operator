@@ -1,0 +1,15 @@
+2026-11-12T03:41:34+00:00
+Linux 4f9845e5090b 6.18.58.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Mon Oct 26 23:55:39 UTC 2026 aarch64 GNU/Linux
+go version go1.27.4 linux/arm64
+Client Version: v1.37.1
+Kustomize Version: v5.8.1
+Server Version: v1.37.0
+29.9.3
+8 CPUs; 8106524672 bytes; aarch64; Docker Desktop
+v4.3.1+gc0d08d0
+kind v0.33.0 go1.26.7 linux/arm64
+# Server
+redis_version:7.4.7
+redis_git_sha1:00000000
+redis_git_dirty:0
+redis_build_id:c2f544f0759e4e85

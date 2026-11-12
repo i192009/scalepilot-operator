@@ -1,0 +1,17 @@
+go test -tags=e2e ./tests/e2e -count=1 -v -timeout=20m
+=== RUN   TestScalingAndCooldown
+--- PASS: TestScalingAndCooldown (120.63s)
+=== RUN   TestConflict
+--- PASS: TestConflict (0.84s)
+=== RUN   TestRedisOutage
+--- PASS: TestRedisOutage (29.37s)
+=== RUN   TestFailover
+--- PASS: TestFailover (6.94s)
+=== RUN   TestWorkerCrashRecovery
+--- PASS: TestWorkerCrashRecovery (33.92s)
+=== RUN   TestResourceBudgetAndUnavailableCapacity
+--- PASS: TestResourceBudgetAndUnavailableCapacity (52.57s)
+=== RUN   TestAdmissionRejectsCompetingReplicaWrites
+--- PASS: TestAdmissionRejectsCompetingReplicaWrites (15.80s)
+PASS
+ok  	github.com/scalepilot/scalepilot-operator/tests/e2e	260.120s

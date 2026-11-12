@@ -1,0 +1,63 @@
+{
+  "capturedAt": "2026-11-12T11:14:41.239Z",
+  "description": "Browser screenshots of recorded local reports; Grafana images are selected copies of original live captures.",
+  "reportSources": [
+    "hpa-burst-io-1.json",
+    "hpa-controller-restart-io-1.json",
+    "hpa-overload-io-1.json",
+    "hpa-ramp-io-1.json",
+    "hpa-redis-outage-io-1.json",
+    "hpa-spike-cpu-1.json",
+    "hpa-spike-io-1.json",
+    "hpa-spike-io-2.json",
+    "hpa-spike-long-1.json",
+    "hpa-steady-io-1.json",
+    "hpa-worker-crash-io-1.json",
+    "pilot-burst-io-1.json",
+    "pilot-controller-restart-io-1.json",
+    "pilot-overload-io-1.json",
+    "pilot-ramp-io-1.json",
+    "pilot-redis-outage-io-1.json",
+    "pilot-spike-cpu-1.json",
+    "pilot-spike-io-1.json",
+    "pilot-spike-io-2.json",
+    "pilot-spike-long-1.json",
+    "pilot-steady-io-1.json",
+    "pilot-worker-crash-io-1.json"
+  ],
+  "reportCaptures": [
+    {
+      "file": "benchmark-results.png",
+      "width": 1512,
+      "height": 1371
+    },
+    {
+      "file": "verification-results.png",
+      "width": 1512,
+      "height": 1608
+    }
+  ],
+  "grafanaCapture": {
+    "url": "http://scalepilot-dev:3000/d/scalepilot/scalepilot-workload-autoscaling?orgId=1&from=now-30m&to=now&var-namespace=demo&var-policy=document-worker-policy&timezone=browser&refresh=5s",
+    "capturedAt": "2026-11-12T04:12:51.036Z",
+    "queryFailures": []
+  },
+  "files": [
+    {
+      "file": "benchmark-results.png",
+      "sha256": "e76725585fed1cd500735eb877af2b22e2eb9a60f07d7864a080997623176633"
+    },
+    {
+      "file": "verification-results.png",
+      "sha256": "d5489e69c3753a087bebed7f789ef81783514af60f04de59c48351dfe1863fbd"
+    },
+    {
+      "file": "grafana-overview.png",
+      "sha256": "cdf6eaec329ace31c336c5fc46790806fbef636fd84664352a515841ad2e6b77"
+    },
+    {
+      "file": "grafana-decisions.png",
+      "sha256": "6c0532550254780ec5f296a2ba0ac7c5a611ddc768e5c8fbda947779323b77c2"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "url": "http://scalepilot-dev:3000/d/scalepilot/scalepilot-workload-autoscaling?orgId=1&from=now-30m&to=now&var-namespace=demo&var-policy=document-worker-policy&timezone=browser&refresh=5s",
+  "capturedAt": "2026-11-12T04:12:51.036Z",
+  "queryFailures": []
+}

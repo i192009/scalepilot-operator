@@ -1,0 +1,20 @@
+goos: linux
+goarch: arm64
+pkg: github.com/scalepilot/scalepilot-operator/internal/scaling
+BenchmarkEvaluate-8     	 6710176	       158.1 ns/op	      32 B/op	       1 allocs/op
+BenchmarkEvaluate-8     	 9300244	       135.8 ns/op	      32 B/op	       1 allocs/op
+BenchmarkEvaluate-8     	 6918864	       163.4 ns/op	      32 B/op	       1 allocs/op
+BenchmarkPolicySets/10-8         	  660704	      1705 ns/op	     344 B/op	      11 allocs/op
+BenchmarkPolicySets/10-8         	  864036	      1521 ns/op	     344 B/op	      11 allocs/op
+BenchmarkPolicySets/10-8         	  835275	      1465 ns/op	     344 B/op	      11 allocs/op
+BenchmarkPolicySets/100-8        	   70490	     14985 ns/op	    3224 B/op	     101 allocs/op
+BenchmarkPolicySets/100-8        	   78505	     14697 ns/op	    3224 B/op	     101 allocs/op
+BenchmarkPolicySets/100-8        	   85365	     14257 ns/op	    3224 B/op	     101 allocs/op
+BenchmarkPolicySets/500-8        	   16290	     72734 ns/op	   16024 B/op	     501 allocs/op
+BenchmarkPolicySets/500-8        	   15955	     81787 ns/op	   16024 B/op	     501 allocs/op
+BenchmarkPolicySets/500-8        	   16532	     72984 ns/op	   16024 B/op	     501 allocs/op
+BenchmarkPolicySets/1000-8       	    8397	    146305 ns/op	   32024 B/op	    1001 allocs/op
+BenchmarkPolicySets/1000-8       	    8241	    143587 ns/op	   32024 B/op	    1001 allocs/op
+BenchmarkPolicySets/1000-8       	    8713	    145068 ns/op	   32024 B/op	    1001 allocs/op
+PASS
+ok  	github.com/scalepilot/scalepilot-operator/internal/scaling	17.977s

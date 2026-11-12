@@ -1,0 +1,4 @@
+go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0 run
+0 issues.
+go vet ./...
+ok  	github.com/scalepilot/scalepilot-operator/tests/e2e	0.006s [no tests to run]

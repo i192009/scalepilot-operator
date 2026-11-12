@@ -1,0 +1,45 @@
+name: CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Toolchain
+        run: |
+          TOOL_BIN="$RUNNER_TEMP/bin" bash scripts/bootstrap-tools.sh
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - name: Formatting, vet, lint
+        run: |
+          test -z "$(gofmt -l api cmd internal tests)"
+          make vet lint
+      - name: Generated code and schema consistency
+        run: make verify-generated
+      - name: Unit and race tests
+        run: make test-unit test-race
+      - name: Redis Testcontainers
+        run: make test-integration
+      - name: Real API server and etcd integration
+        run: make test-envtest
+      - name: Helm
+        run: make helm-lint
+      - name: Dependency vulnerability analysis
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+      - name: Build all runnable artifacts
+        run: make build docker-build
+      - name: Container vulnerability scan
+        run: |
+          for image in scalepilot/operator:dev scalepilot/worker:dev scalepilot/loadgen:dev; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.76.2 image --scanners vuln --severity HIGH,CRITICAL --exit-code 1 "$image"
+          done

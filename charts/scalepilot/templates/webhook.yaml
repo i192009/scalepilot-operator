@@ -1,0 +1,70 @@
+{{- if .Values.admissionGuard.enabled }}
+{{- $secret := lookup "v1" "Secret" .Release.Namespace "scalepilot-webhook-tls" }}
+{{- $ca := genCA "scalepilot-webhook" 365 }}
+{{- $dns := printf "scalepilot-webhook.%s.svc" .Release.Namespace }}
+{{- $cert := genSignedCert $dns nil (list $dns (printf "%s.cluster.local" $dns)) 365 $ca }}
+{{- $caData := $ca.Cert | b64enc }}
+{{- $certData := $cert.Cert | b64enc }}
+{{- $keyData := $cert.Key | b64enc }}
+{{- if $secret }}
+{{- $caData = index $secret.data "ca.crt" }}
+{{- $certData = index $secret.data "tls.crt" }}
+{{- $keyData = index $secret.data "tls.key" }}
+{{- end }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: scalepilot-webhook-tls
+  namespace: {{ .Release.Namespace }}
+type: kubernetes.io/tls
+data:
+  ca.crt: {{ $caData }}
+  tls.crt: {{ $certData }}
+  tls.key: {{ $keyData }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scalepilot-webhook
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    {{- include "scalepilot.labels" . | nindent 4 }}
+  ports:
+    - name: webhook
+      port: 443
+      targetPort: webhook
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: {{ .Release.Name }}-replica-ownership
+webhooks:
+  - name: replicas.autoscaling.scalepilot.io
+    admissionReviewVersions: [v1]
+    sideEffects: None
+    failurePolicy: Fail
+    timeoutSeconds: 5
+    matchPolicy: Equivalent
+    {{- if not .Values.clusterWide }}
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: {{ include "scalepilot.watchNamespace" . }}
+    {{- end }}
+    clientConfig:
+      caBundle: {{ $caData }}
+      service:
+        name: scalepilot-webhook
+        namespace: {{ .Release.Namespace }}
+        path: /validate-replica-ownership
+        port: 443
+    rules:
+      - apiGroups: [apps]
+        apiVersions: [v1]
+        operations: [UPDATE]
+        resources: [deployments, deployments/scale]
+        scope: Namespaced
+    matchConditions:
+      - name: replica-change
+        expression: '(has(object.spec.replicas) ? object.spec.replicas : 0) != (has(oldObject.spec.replicas) ? oldObject.spec.replicas : 0)'
+{{- end }}

@@ -1,0 +1,6 @@
+/workspace/bin/controller-gen object:headerFile=hack/boilerplate.go.txt paths=./api/...
+/workspace/bin/controller-gen crd:allowDangerousTypes=true rbac:roleName=manager-role paths=./... output:crd:artifacts:config=config/crd/bases output:rbac:artifacts:config=config/rbac
+mkdir -p charts/scalepilot/crds charts/scalepilot/rbac
+cp config/crd/bases/*.yaml charts/scalepilot/crds/
+cp config/rbac/role.yaml charts/scalepilot/rbac/role.yaml
+git diff --exit-code -- api/v1alpha1/zz_generated.deepcopy.go config/crd config/rbac/role.yaml charts/scalepilot/crds charts/scalepilot/rbac

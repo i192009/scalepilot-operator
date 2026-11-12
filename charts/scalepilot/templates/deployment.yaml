@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scalepilot-controller
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "scalepilot.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "scalepilot.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "scalepilot.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: scalepilot
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 8 }}
+      containers:
+        - name: manager
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --leader-elect={{ .Values.leaderElection }}
+            - --admission-guard={{ .Values.admissionGuard.enabled }}
+            - --operator-identity=system:serviceaccount:{{ .Release.Namespace }}:scalepilot
+            - --cluster-wide={{ .Values.clusterWide }}
+            {{- if not .Values.clusterWide }}
+            - --watch-namespace={{ include "scalepilot.watchNamespace" . }}
+            {{- end }}
+            - --log-level={{ .Values.logLevel }}
+            - --reconcile-interval={{ .Values.reconcileInterval }}
+            - --metrics-bind-address=:{{ .Values.metrics.port }}
+            - --metrics-secure={{ .Values.metrics.secure }}
+            - --health-probe-bind-address=:{{ .Values.healthPort }}
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            {{- if .Values.otelEndpoint }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.otelEndpoint | quote }}
+            {{- end }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+            - name: health
+              containerPort: {{ .Values.healthPort }}
+            {{- if .Values.admissionGuard.enabled }}
+            - name: webhook
+              containerPort: 9443
+            {{- end }}
+          readinessProbe:
+            httpGet: {path: /readyz, port: health}
+            initialDelaySeconds: 2
+          livenessProbe:
+            httpGet: {path: /healthz, port: health}
+            initialDelaySeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          volumeMounts:
+            - name: temporary
+              mountPath: /tmp
+          {{- if .Values.admissionGuard.enabled }}
+            - name: webhook-certs
+              mountPath: /etc/scalepilot/webhook
+              readOnly: true
+          {{- end }}
+      volumes:
+        - name: temporary
+          emptyDir:
+            sizeLimit: 16Mi
+      {{- if .Values.admissionGuard.enabled }}
+        - name: webhook-certs
+          secret:
+            secretName: scalepilot-webhook-tls
+      {{- end }}

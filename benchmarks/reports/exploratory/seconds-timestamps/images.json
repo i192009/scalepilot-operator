@@ -1,0 +1,23 @@
+[
+    {
+        "RepoTags":  [
+                         "scalepilot/operator:dev"
+                     ],
+        "Id":  "sha256:98e21e75cb6d443c3661641a259e850e440bc524854c0de93c7bc45c189eabbd",
+        "Created":  "2026-11-12T03:01:19.93433695Z"
+    },
+    {
+        "RepoTags":  [
+                         "scalepilot/worker:dev"
+                     ],
+        "Id":  "sha256:711d80832af08a6eb01a5284a170a871aa835c6dd3b669b2b4887a77c360ff0d",
+        "Created":  "2026-11-12T03:01:23.772036215Z"
+    },
+    {
+        "RepoTags":  [
+                         "scalepilot/loadgen:dev"
+                     ],
+        "Id":  "sha256:c951c50f9923e841a06d100cd951a348a7e5ddb82bc4c50db151c072aa8f0205",
+        "Created":  "2026-11-12T03:01:25.353964741Z"
+    }
+]

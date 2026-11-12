@@ -1,0 +1,19 @@
+gofmt -w api cmd internal tests
+go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0 run --fix
+0 issues.
+go vet ./...
+go test -race ./internal/... ./cmd/... -count=1
+?   	github.com/scalepilot/scalepilot-operator/internal/controller	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/metrics	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/observability	[no test files]
+ok  	github.com/scalepilot/scalepilot-operator/internal/policy	1.054s
+?   	github.com/scalepilot/scalepilot-operator/internal/queue	[no test files]
+ok  	github.com/scalepilot/scalepilot-operator/internal/scaling	1.061s
+ok  	github.com/scalepilot/scalepilot-operator/internal/security	2.191s
+?   	github.com/scalepilot/scalepilot-operator/internal/testutil	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/internal/workload	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/benchmark	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/loadgen	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/policybench	[no test files]
+?   	github.com/scalepilot/scalepilot-operator/cmd/worker	[no test files]

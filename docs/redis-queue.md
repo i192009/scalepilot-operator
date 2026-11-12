@@ -1,0 +1,19 @@
+# Queue protocol
+
+Each queue uses the Redis hash tag `scalepilot:{queue}`. The supplied protocol supports one consumer group, with one serial active job per worker. Enqueue uses XADD and updates a server-time telemetry bucket atomically. Workers create the group from `0` so earlier queued work is not skipped.
+
+New claims use XREADGROUP. Recoverable interrupted deliveries remain in the pending entries list (PEL). XAUTOCLAIM scans with a retained cursor, so busy early entries cannot indefinitely hide later abandoned deliveries. Heartbeats use an atomic consumer check plus XCLAIM JUSTID. A worker that loses ownership cannot reclaim or acknowledge a newer owner's delivery.
+
+Attempts persist in a Redis hash. Explicit failures remain pending until the idle recovery threshold; after three attempts by default the worker atomically writes the failed stream and acknowledges/removes the original. Malformed jobs go directly to dead-letter storage. Successful acknowledgement checks ownership, commits the example's 24-hour idempotency marker with SET NX, records actual execution/wait telemetry once, XACKs and XDELs the entry, and removes attempt bookkeeping in one Lua script.
+
+Execution is at least once. The simulated work has no external effect; the committed marker represents the idempotent effect. Actual business side effects need a transactional or durable idempotency mechanism; do not assume this Redis marker can make a payment/email exactly once.
+
+Metrics collection is atomic relative to the queue's Lua writes. Unread backlog is XINFO GROUPS lag; in-flight is XPENDING count. Oldest age uses the oldest unread entry and oldest PEL ID. Redis can invalidate its entries-read/lag estimate around deletions. For this explicitly single-group queue, every acknowledgement atomically deletes its entry, so retained entries are exactly unread plus PEL. When Redis lag is unavailable, `XLEN - XPENDING` therefore gives unread work under this invariant; XLEN alone never means unread backlog. Additional groups or negative/inconsistent retained counts fail collection. External XACK-without-XDEL or manual stream mutation violates the supported protocol and must not be used.
+
+Arrival/completion/failure rates and duration histograms aggregate the current and previous 59 Redis server-time seconds, divided by 60. Warm-up rates are intentionally conservative moving averages, not instantaneous estimates. TTLs bound counters to 180 seconds; fixed execution buckets provide a p95 upper bound. Zero duration/p95 with zero execution samples means **unavailable execution data**, not a fabricated measurement. The operator's freshness timestamp is Redis server time, so clock skew can safely reject a sample.
+
+The `results` audit stream stores actual completion wait/execution values for reproducible experiments, bounded approximately to 10,000 entries. Benchmarks cap input at 9,000 jobs and reject an incomplete audit. The failed stream is also bounded approximately to 10,000 records: production dead-letter retention requires an external archival policy. Committed-effect markers expire after 24 hours. Primary work entries are removed only after safe acknowledgement; they are not trimmed while outstanding.
+
+SIGTERM stops new claims, permits the current job up to the configured shutdown grace, and preserves unfinished PEL entries. Demo Pods allow 35 seconds; the worker defaults to 25 seconds plus a bounded acknowledgement timeout. Long work renews ownership periodically. Heartbeat failures cancel execution; an interrupted effect may run again after reclamation.
+
+Redis clients use pooled connections, authenticated TLS/mTLS when configured, bounded network timeouts, context cancellation and two retries. Collection errors are deliberately categorical so connection credentials cannot leak through error strings. Default demo Redis is unauthenticated behind a NetworkPolicy and is not a production configuration.

@@ -1,0 +1,43 @@
+name: Kind acceptance
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  kind:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Tools
+        run: |
+          TOOL_BIN="$RUNNER_TEMP/bin" bash scripts/bootstrap-tools.sh
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - name: Cluster, operator and workers
+        run: make kind-create docker-build kind-load install-crds deploy deploy-demo
+      - name: Real scaling and failure injection assertions
+        run: make test-e2e
+      - name: Diagnostics
+        if: failure()
+        run: |
+          mkdir -p artifacts
+          kubectl get pods -A -o wide > artifacts/pods.txt
+          kubectl get events -A --sort-by=.lastTimestamp > artifacts/events.txt
+          kubectl -n scalepilot-system logs -l app.kubernetes.io/name=scalepilot --all-containers --tail=500 > artifacts/controller.txt
+          kubectl -n demo get wsp -o yaml > artifacts/policy.yaml
+          kind export logs artifacts/kind --name scalepilot
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        if: failure()
+        with:
+          name: kind-diagnostics
+          path: artifacts/
+      - name: Cleanup
+        if: always()
+        run: make kind-delete

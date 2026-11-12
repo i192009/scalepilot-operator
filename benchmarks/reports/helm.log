@@ -1,0 +1,6 @@
+helm lint charts/scalepilot
+==> Linting charts/scalepilot
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+helm template scalepilot charts/scalepilot --namespace scalepilot-system > /tmp/scalepilot-helm.yaml

@@ -1,0 +1,11 @@
+/bin/
+/artifacts/
+/.tools/
+/.kube/
+/.env
+*.test
+coverage.out
+coverage.html
+*.exe
+*.prof
+!benchmarks/reports/**

@@ -1,0 +1,378 @@
+[
+  {
+    "Policies": 10,
+    "MeasuredAt": "2026-11-12T03:55:14.115764763Z",
+    "DurationSeconds": 30.14579434,
+    "ObservedPolicies": 10,
+    "ObservedStatusUpdates": 50,
+    "UpdatesPerSecond": 1.6586061041659221,
+    "Prometheus": {
+      "api_requests_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455744.484,
+              "10.159988800447982"
+            ]
+          }
+        ]
+      },
+      "cpu_cores": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455744.404,
+              "0.01839987200511983"
+            ]
+          }
+        ]
+      },
+      "queue_depth": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455744.469,
+              "0"
+            ]
+          }
+        ]
+      },
+      "reconcile_p95_seconds": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455744.421,
+              "0.05416666666666667"
+            ]
+          }
+        ]
+      },
+      "reconciliations_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455744.444,
+              "2.2"
+            ]
+          }
+        ]
+      },
+      "redis_collections_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455744.481,
+              "2.2"
+            ]
+          }
+        ]
+      },
+      "resident_memory_bytes": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455744.306,
+              "60358656"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Policies": 100,
+    "MeasuredAt": "2026-11-12T03:55:45.178829364Z",
+    "DurationSeconds": 30.49244237,
+    "ObservedPolicies": 100,
+    "ObservedStatusUpdates": 500,
+    "UpdatesPerSecond": 16.39750545707096,
+    "Prometheus": {
+      "api_requests_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455775.682,
+              "81.32001440057603"
+            ]
+          }
+        ]
+      },
+      "cpu_cores": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455775.692,
+              "0.11760062402496103"
+            ]
+          }
+        ]
+      },
+      "queue_depth": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455775.677,
+              "0"
+            ]
+          }
+        ]
+      },
+      "reconcile_p95_seconds": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455775.697,
+              "0.08800480769230769"
+            ]
+          }
+        ]
+      },
+      "reconciliations_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455775.673,
+              "19.96"
+            ]
+          }
+        ]
+      },
+      "redis_collections_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455775.679,
+              "19.96"
+            ]
+          }
+        ]
+      },
+      "resident_memory_bytes": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455775.687,
+              "61255680"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Policies": 500,
+    "MeasuredAt": "2026-11-12T03:56:20.188193935Z",
+    "DurationSeconds": 31.449272308,
+    "ObservedPolicies": 500,
+    "ObservedStatusUpdates": 171,
+    "UpdatesPerSecond": 5.437327613272146,
+    "Prometheus": {
+      "api_requests_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455811.649,
+              "80.88322252890116"
+            ]
+          }
+        ]
+      },
+      "cpu_cores": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455811.658,
+              "0.13360470418816758"
+            ]
+          }
+        ]
+      },
+      "queue_depth": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455811.639,
+              "400"
+            ]
+          }
+        ]
+      },
+      "reconcile_p95_seconds": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455811.663,
+              "0.095"
+            ]
+          }
+        ]
+      },
+      "reconciliations_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455811.669,
+              "20.00080003200128"
+            ]
+          }
+        ]
+      },
+      "redis_collections_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455811.645,
+              "20.00080003200128"
+            ]
+          }
+        ]
+      },
+      "resident_memory_bytes": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455811.654,
+              "77586432"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Policies": 1000,
+    "MeasuredAt": "2026-11-12T03:57:03.28095325Z",
+    "DurationSeconds": 30.355625906,
+    "ObservedPolicies": 719,
+    "ObservedStatusUpdates": 24,
+    "UpdatesPerSecond": 0.7906277326670158,
+    "Prometheus": {
+      "api_requests_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455853.650,
+              "81.04"
+            ]
+          }
+        ]
+      },
+      "cpu_cores": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455853.641,
+              "0.13440000000000013"
+            ]
+          }
+        ]
+      },
+      "queue_depth": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455853.647,
+              "900"
+            ]
+          }
+        ]
+      },
+      "reconcile_p95_seconds": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455853.644,
+              "0.09522821576763485"
+            ]
+          }
+        ]
+      },
+      "reconciliations_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455853.646,
+              "20"
+            ]
+          }
+        ]
+      },
+      "redis_collections_per_second": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455853.649,
+              "20"
+            ]
+          }
+        ]
+      },
+      "resident_memory_bytes": {
+        "resultType": "vector",
+        "result": [
+          {
+            "metric": {},
+            "value": [
+              1794455853.637,
+              "88539136"
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

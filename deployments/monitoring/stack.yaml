@@ -1,0 +1,254 @@
+apiVersion: v1
+kind: Namespace
+metadata: {name: monitoring}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: prometheus, namespace: monitoring}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata: {name: scalepilot-monitoring}
+rules:
+  - apiGroups: [""]
+    resources: [pods, nodes, nodes/metrics, nodes/proxy, services, endpoints]
+    verbs: [get, list, watch]
+  - nonResourceURLs: [/metrics]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata: {name: scalepilot-monitoring}
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: scalepilot-monitoring}
+subjects:
+  - {kind: ServiceAccount, name: prometheus, namespace: monitoring}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: prometheus, namespace: monitoring}
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 5s
+      evaluation_interval: 5s
+    scrape_configs:
+      - job_name: scalepilot
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: [scalepilot-system]
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+            regex: scalepilot
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_container_port_name]
+            regex: metrics
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+      - job_name: kube-state-metrics
+        static_configs:
+          - targets: [kube-state-metrics.monitoring.svc:8080]
+      - job_name: cadvisor
+        kubernetes_sd_configs:
+          - role: node
+        scheme: https
+        authorization:
+          credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        relabel_configs:
+          - target_label: __address__
+            replacement: kubernetes.default.svc:443
+          - source_labels: [__meta_kubernetes_node_name]
+            target_label: __metrics_path__
+            regex: (.+)
+            replacement: /api/v1/nodes/$1/proxy/metrics/cadvisor
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: prometheus, namespace: monitoring}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: prometheus}
+  template:
+    metadata:
+      labels: {app: prometheus}
+    spec:
+      serviceAccountName: prometheus
+      securityContext: {runAsUser: 65534, runAsGroup: 65534, fsGroup: 65534, runAsNonRoot: true}
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v3.13.5
+          args: [--config.file=/etc/prometheus/prometheus.yml, --storage.tsdb.path=/prometheus, --storage.tsdb.retention.time=6h]
+          ports: [{name: http, containerPort: 9090}]
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {cpu: "1", memory: 512Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - {name: config, mountPath: /etc/prometheus}
+            - {name: data, mountPath: /prometheus}
+          readinessProbe:
+            httpGet: {path: /-/ready, port: http}
+      volumes:
+        - name: config
+          configMap: {name: prometheus}
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: prometheus, namespace: monitoring}
+spec:
+  selector: {app: prometheus}
+  ports: [{port: 9090, targetPort: http}]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: kube-state-metrics, namespace: monitoring}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata: {name: scalepilot-kube-state-metrics}
+rules:
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list, watch]
+  - apiGroups: [apps]
+    resources: [deployments]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata: {name: scalepilot-kube-state-metrics}
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: scalepilot-kube-state-metrics}
+subjects:
+  - {kind: ServiceAccount, name: kube-state-metrics, namespace: monitoring}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: kube-state-metrics, namespace: monitoring}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: kube-state-metrics}
+  template:
+    metadata:
+      labels: {app: kube-state-metrics}
+    spec:
+      serviceAccountName: kube-state-metrics
+      securityContext: {runAsNonRoot: true, runAsUser: 65534}
+      containers:
+        - name: kube-state-metrics
+          image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.17.0
+          args: ["--resources=pods,deployments", "--namespaces=demo,scalepilot-system,benchmark"]
+          ports: [{name: http, containerPort: 8080}]
+          resources:
+            requests: {cpu: 20m, memory: 32Mi}
+            limits: {cpu: 200m, memory: 128Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+            readOnlyRootFilesystem: true
+---
+apiVersion: v1
+kind: Service
+metadata: {name: kube-state-metrics, namespace: monitoring}
+spec:
+  selector: {app: kube-state-metrics}
+  ports: [{port: 8080, targetPort: http}]
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: grafana-provisioning, namespace: monitoring}
+data:
+  datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        uid: prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus:9090
+        isDefault: true
+        editable: false
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+      - name: ScalePilot
+        orgId: 1
+        folder: ScalePilot
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 10
+        options:
+          path: /var/lib/grafana/dashboards
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: grafana, namespace: monitoring}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: grafana}
+  template:
+    metadata:
+      labels: {app: grafana}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {runAsUser: 472, runAsGroup: 472, fsGroup: 472, runAsNonRoot: true}
+      containers:
+        - name: grafana
+          image: grafana/grafana:12.4.15
+          env:
+            - {name: GF_AUTH_ANONYMOUS_ENABLED, value: "true"}
+            - {name: GF_AUTH_ANONYMOUS_ORG_ROLE, value: Viewer}
+            - {name: GF_AUTH_DISABLE_LOGIN_FORM, value: "true"}
+            - {name: GF_ANALYTICS_REPORTING_ENABLED, value: "false"}
+            - {name: GF_PLUGINS_PREINSTALL_DISABLED, value: "true"}
+            - {name: GF_DATABASE_WAL, value: "true"}
+            - {name: GOMAXPROCS, value: "2"}
+          ports: [{name: http, containerPort: 3000}]
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {cpu: "2", memory: 768Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+            readOnlyRootFilesystem: true
+          readinessProbe:
+            httpGet: {path: /api/health, port: http}
+            timeoutSeconds: 5
+          volumeMounts:
+            - {name: provisioning, mountPath: /etc/grafana/provisioning/datasources, subPath: datasource}
+            - {name: dashboard-provider, mountPath: /etc/grafana/provisioning/dashboards}
+            - {name: dashboards, mountPath: /var/lib/grafana/dashboards}
+            - {name: data, mountPath: /var/lib/grafana}
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - name: provisioning
+          configMap:
+            name: grafana-provisioning
+            items: [{key: datasource.yaml, path: datasource/datasource.yaml}]
+        - name: dashboard-provider
+          configMap:
+            name: grafana-provisioning
+            items: [{key: dashboards.yaml, path: dashboards.yaml}]
+        - name: dashboards
+          configMap: {name: scalepilot-dashboard}
+        - name: data
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: grafana, namespace: monitoring}
+spec:
+  selector: {app: grafana}
+  ports: [{port: 3000, targetPort: http}]

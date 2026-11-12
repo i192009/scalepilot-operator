@@ -1,0 +1,6 @@
+hpa: drained=102.42s maxReplicas=1 p95Wait=96.26s podSeconds=102.36 -> benchmarks/reports/hpa-spike-io-1.json
+pilot: drained=32.45s maxReplicas=6 p95Wait=29.96s podSeconds=119.62 -> benchmarks/reports/pilot-spike-io-1.json
+hpa: drained=103.07s maxReplicas=1 p95Wait=96.18s podSeconds=103.02 -> benchmarks/reports/hpa-spike-io-2.json
+pilot: drained=32.64s maxReplicas=6 p95Wait=30.16s podSeconds=120.16 -> benchmarks/reports/pilot-spike-io-2.json
+hpa: drained=38.71s maxReplicas=6 p95Wait=37.07s podSeconds=116.42 -> benchmarks/reports/hpa-spike-cpu-1.json
+pilot: drained=32.55s maxReplicas=6 p95Wait=30.36s podSeconds=118.10 -> benchmarks/reports/pilot-spike-cpu-1.json

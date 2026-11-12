@@ -1,0 +1,4 @@
+10 policies: 10 observed, 1.66 observed status updates/s
+100 policies: 100 observed, 16.40 observed status updates/s
+500 policies: 500 observed, 5.44 observed status updates/s
+1000 policies: 719 observed, 0.79 observed status updates/s

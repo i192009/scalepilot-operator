@@ -1,0 +1,4 @@
+=== RUN   TestConflict
+--- PASS: TestConflict (0.77s)
+PASS
+ok  	github.com/scalepilot/scalepilot-operator/tests/e2e	0.782s

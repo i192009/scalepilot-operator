@@ -1,0 +1,17 @@
+.git
+bin
+artifacts
+.kube
+.tools
+*.prof
+coverage*
+docs
+benchmarks
+tests
+.github
+config
+charts
+deployments
+scripts
+examples
+policybench

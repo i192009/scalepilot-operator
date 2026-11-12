@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: scalepilot-metrics
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "scalepilot.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "scalepilot.labels" . | nindent 4 }}
+  ports:
+    - name: metrics
+      port: {{ .Values.metrics.port }}
+      targetPort: metrics
+{{- if .Values.serviceMonitor.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: scalepilot
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- toYaml .Values.serviceMonitor.labels | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "scalepilot.labels" . | nindent 6 }}
+  endpoints:
+    - port: metrics
+      interval: 10s
+      scheme: {{ if .Values.metrics.secure }}https{{ else }}http{{ end }}
+      {{- with .Values.serviceMonitor.tlsConfig }}
+      tlsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.serviceMonitor.authorization }}
+      authorization:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

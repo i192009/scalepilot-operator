@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata: {name: generate-load, namespace: demo}
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 600
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 65532, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: loadgen
+          image: scalepilot/loadgen:dev
+          imagePullPolicy: IfNotPresent
+          args: [--jobs=1000, --rate=1000, --pattern=spike, --burst=1, --job-duration=500ms, --duration=30s]
+          env:
+            - name: REDIS_ADDRESS
+              valueFrom:
+                secretKeyRef: {name: redis-connection, key: address}
+          resources:
+            requests: {cpu: 50m, memory: 16Mi}
+            limits: {cpu: "1", memory: 64Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}

@@ -1,0 +1,70 @@
+# Development-only unauthenticated Redis, isolated by namespace and NetworkPolicy.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: redis}
+  template:
+    metadata:
+      labels: {app: redis}
+    spec:
+      securityContext: {runAsUser: 999, runAsGroup: 999, fsGroup: 999, runAsNonRoot: true}
+      containers:
+        - name: redis
+          image: redis:7.4.7-alpine
+          args: [redis-server, --appendonly, "yes", --appendfsync, everysec, --maxmemory, 128mb, --maxmemory-policy, noeviction]
+          ports: [{name: redis, containerPort: 6379}]
+          resources:
+            requests: {cpu: 100m, memory: 64Mi}
+            limits: {cpu: "1", memory: 256Mi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - {name: data, mountPath: /data}
+          readinessProbe:
+            exec: {command: [redis-cli, ping]}
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: redis-data}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: redis-data, namespace: demo}
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests: {storage: 1Gi}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: redis, namespace: demo}
+spec:
+  selector: {app: redis}
+  ports: [{port: 6379, targetPort: redis}]
+---
+apiVersion: v1
+kind: Secret
+metadata: {name: redis-connection, namespace: demo}
+type: Opaque
+stringData:
+  address: redis.demo.svc.cluster.local:6379
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: redis, namespace: demo}
+spec:
+  podSelector:
+    matchLabels: {app: redis}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector: {}
+        - namespaceSelector:
+            matchLabels: {kubernetes.io/metadata.name: scalepilot-system}
+      ports: [{port: 6379, protocol: TCP}]
